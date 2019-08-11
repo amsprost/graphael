@@ -3,6 +3,7 @@
 namespace Graphael\Security\Authorization;
 
 use Graphael\Entity\Security\UsernameAuthorization;
+use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
@@ -19,6 +20,10 @@ class UsernameVoter extends Voter
     {
         assert($subject instanceof UsernameAuthorization);
         assert($attribute === static::USER_ROLE);
+
+        if ($token instanceof AnonymousToken) {
+            return false;
+        }
 
         return $token->getUsername() === $subject->getAccessedUsername();
     }
